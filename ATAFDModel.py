@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from random import randint
+import math
 
 
 
@@ -26,10 +27,10 @@ Agents:
 """ 
 
 class Agent:
-    def __init__(self, ID, skillLength, timeFactor):
+    def __init__(self, ID, skillLength):
         self.ID = ID
         self.skillLength = skillLength
-        self.skillStrength = timeFactor/skillLength
+      
         self.skillType = set()
         
         #generate list of skill types
@@ -51,8 +52,8 @@ class Task:
         self.agentAssigned = -1
         #set to -1 before task has been started by an agent
         self.timeRequired = -1
-        #set to -1 when agents are not competing for this task
-        self.pendingTimeRequired = -1
+        
+       
         
         
         
@@ -94,17 +95,17 @@ def Initialization(blackboard, numAgents, numTasks, foxHedge, timeFactor):
     #create foxes
     for i in range(numFox):
         #create fox agents and append them to the list of idle agents 
-        blackboard.idleAgents.append(Agent(i, skillLength[i], timeFactor))
+        blackboard.idleAgents.append(Agent(i, skillLength[i]))
         
     for i in range(numHedge):
         #create hedgehog agents and append them to the list of idle agents 
-        blackboard.idleAgents.append(Agent(i+numFox, 1, timeFactor))
+        blackboard.idleAgents.append(Agent(i+numFox, 1))
         
     #shuffle list of agents
     blackboard.idleAgents = random.shuffle(blackboard.idleAgents)
     
     #generate tasks
-    for i in numTasks:
+    for i in range(numTasks):
         blackboard.unclaimedTasks.append(Task())
     
        
@@ -118,6 +119,7 @@ Paramters (Type Name):
     List[Task] destination - list it's being moved to
 """   
 def MoveTask(toBeMoved, source, destination): 
+    ##if toBeMoved in source:
     #remove task from source list
     source.remove(toBeMoved)
     #add task to destination list
@@ -146,17 +148,19 @@ Parameters (Type Name):
     List[Task] taskSource
     List[Task] claimedTasks
 """   
-def Assign(agentSource, busyAgents, taskSource, claimedTasks):
+def Assign(agentSource, busyAgents, taskSource, claimedTasks, timeFactor):
     #agents iterate through task list and take the first eligible match
-    for agent in agentSource:
-        for task in taskSource:
-            #if task type matches agent type
-            if task.taskType in agent.skillType: 
-                #set task's assigned agent to agent ID
-                task.agentAssigned = agent.ID
-                task.timeRequired = agent.skillStrength
-                MoveTask(task, taskSource, claimedTasks)
-                MoveAgent(agent, agentSource, busyAgents)
+    if agentSource is not None:
+        for agent in agentSource:
+            if taskSource is not None:
+                for task in taskSource:
+                    #if task type matches agent type
+                    if task.taskType in agent.skillType: 
+                        #set task's assigned agent to agent ID
+                        task.agentAssigned = agent.ID
+                        task.timeRequired = timeFactor*agent.skillLength
+                        MoveTask(task, taskSource, claimedTasks)
+                        MoveAgent(agent, agentSource, busyAgents)
                 
 
 """
@@ -167,8 +171,8 @@ Parameters (Type Name):
     List[Task] unclaimedTasks
     List[Task] claimedTasks
 """     
-def AssignUnclaimed(idleAgents, busyAgents, unclaimedTasks, claimedTasks):
-    Assign(idleAgents, busyAgents, unclaimedTasks, claimedTasks)
+def AssignUnclaimed(idleAgents, busyAgents, unclaimedTasks, claimedTasks, timeFactor):
+    Assign(idleAgents, busyAgents, unclaimedTasks, claimedTasks, timeFactor)
     
     
 """
@@ -179,24 +183,32 @@ May add an AssignNew function later
 """
 """     
 def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationTimer):
+    if claimedTasks is not None:
+        print("claimedTasks is not empty")
     for task in claimedTasks:
+        print("time required: ", task.timeRequired)
+        #work on task by subtracting 1
         task.timeRequired = task.timeRequired - 1
+        
         if task.timeRequired == 0:
+            if task in claimedTasks:
+                print("task is in claimedTask")
             MoveTask(task, claimedTasks, completedTasks)
             for agent in busyAgents:
                 if agent.ID == task.assignedAgent:
                     completer = agent
             MoveAgent(completer, busyAgents, idleAgents)
         else:
-           stagnationTimer = stagnationTimer + 1
+              stagnationTimer = stagnationTimer + 1
 """
 Parameters (Type Name):
     List[Agents] idleAgents
     List[Agent] competingAgents
 """    
 def MakeCompetitors(idleAgents, competingAgents):
-    for agent in idleAgents:
-    	MoveAgent(agent, idleAgents, competingAgents)
+    if idleAgents is not None:
+        for agent in idleAgents:
+        	MoveAgent(agent, idleAgents, competingAgents)
 
     
 """
@@ -225,12 +237,14 @@ def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents):
                 MoveAgent(weakerAgent, busyAgents, idleAgents)
                 MoveAgent(agent, competingAgents, busyAgents) 
                 task.agentAssigned = agent.ID
-                task.timeRequired = agent.skillStrength
+                task.timeRequired = math.ceil(agent.skillStrength)
 
 
 """
 """     
 def main(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
+    
+    print("Hello")
     
     #start timers at 0
     timer = 0
@@ -245,17 +259,21 @@ def main(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, penalty, s
     #start simulation loop
     while(numTasks != len(blackboard.completedTasks) and stagnationTimer < stagnationFactor):
         #assign unclaimed task
-        AssignUnclaimed(blackboard.idleAgents, blackboard.busyAgents, blackboard.unclaimedTasks, blackboard.claimedTasks)
-        AgentsWork(blackboard.busyAgents, blackboard.idleAgents, blackboard.claimedTasks, blackboard.completedTasks)
+       # if(len())
+        AssignUnclaimed(blackboard.idleAgents, blackboard.busyAgents, blackboard.unclaimedTasks, blackboard.claimedTasks, timeFactor)
+        AgentsWork(blackboard.busyAgents, blackboard.idleAgents, blackboard.claimedTasks, blackboard.completedTasks, stagnationTimer)
         timer = timer + 1 
         MakeCompetitors(blackboard.idleAgents, blackboard.competingAgents)
         random.shuffle(blackboard.unclaimedTasks)
         random.shuffle(blackboard.claimedTasks)
-        Reassign(blackboard.competingAgents, blackboard.claimedTasks, blackboard.busyAgents)
+        Reassign(blackboard.competingAgents, blackboard.claimedTasks, blackboard.busyAgents, blackboard.idleAgents)
         RemoveCompetitors(blackboard.competingAgents, blackboard.idleAgents)
-        AgentsWork(blackboard.busyAgents, blackboard.idleAgents, blackboard.claimedTasks, blackboard.completedTasks)
+        AgentsWork(blackboard.busyAgents, blackboard.idleAgents, blackboard.claimedTasks, blackboard.completedTasks, stagnationTimer)
         timer = timer + 1
-        
+        #print("timer =  : ", timer)
+        #print("completed tasks", len(blackboard.completedTasks))
+        print("stagnationTimer = ", stagnationTimer)
+    
     #
     incompleteTasks = numTasks - len(blackboard.completedTasks)
     score = (scorecoeff * timer) - penalty * (incompleteTasks)
@@ -280,5 +298,5 @@ def main(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, penalty, s
     
     
     
-main(10, 2000, 100, 1000, 0.2, 0.1, 0.1)
+main(10, 5, 4, 20, 0.2, 0.1, 0.1)
 
