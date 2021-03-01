@@ -6,23 +6,35 @@ Created on Fri Feb 19 00:29:34 2021
 @author: carolineskalla
 """
 
-class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
-    self.list = [1,2,3]
+        
 
-p1 = Person("John", 36)
-print(p1.list)
-p1.list.append(4)
-print(p1.list)
+def MoveAgent(toBeMoved, source, destination): 
+    #remove agent from source list
+    #source.remove(toBeMoved)
+    toBeMoved = source.pop()
+    print("\n")
+    print(source)
 
-print(p1.name)
-print(p1.age)
-
-def addEl(person):
-    person.list.append(5)
-addEl(p1)
-   
-print(p1.list)
+    #add agent to destination list
+    destination.append(toBeMoved)
+    print(destination)
     
+  
+idleAgents = [1,1,1]
+competingAgents = []
+
+print("initial idleAgents size: ", len(idleAgents))
+print("initial competingAgents size: ", len(competingAgents))
+
+print("idleAgents: ", idleAgents)
+print("competingAgents: ", competingAgents)
+
+for agent in idleAgents:
+#for i in range(len(idleAgents)):
+    #agent = idleAgents.pop()
+    MoveAgent(agent, idleAgents, competingAgents)
+        
+        
+        
+print("new idleAgents size: ", len(idleAgents))
+print("new competingAgents size: ", len(competingAgents))       
