@@ -6,24 +6,13 @@ Created on Sun Feb 28 20:58:41 2021
 @author: carolineskalla
 """
 
-def accessSkillTypes(idleAgents, unclaimedTasks):
-    agentSkillTypes = set()
-    taskSkillTypes = set()
-    #collect all agent types
-    for agent in idleAgents:
-        skillSet = agent.skillType
-        for skill in skillSet:
-            agentSkillTypes.add(skill)
-            
-    for task in unclaimedTasks:
-        taskSkillTypes.add(task)
-        
-    numSkillsMissing = taskSkillTypes  - agentSkillTypes 
-    print(numSkillsMissing)
-    
-    
-agentTypes = {3,4,5}
-taskTypes = {1,2,3, 7}
+a = [1,2,3,4,5]
+print(a)
 
-print(taskTypes - agentTypes)
+for agent in list(a):
+    print(agent)
+    if agent == 3 or agent == 1:
+        a.remove(agent)
+        
+print(a)
 

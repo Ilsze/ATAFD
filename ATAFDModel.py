@@ -19,7 +19,7 @@ from random import randint
 import math
 
 #To use debugging print statements set DEBUG to True
-DEBUG = False
+DEBUG = True
 
 def log(s):
     if DEBUG:
@@ -175,16 +175,16 @@ was not removed (a match was not found)
 """
 def Assign(agentSource, busyAgents, taskSource, claimedTasks, timeFactor):
     #agents iterate through task list and take the first eligible match
-    agentIndex = 0
+    #agentIndex = 0
     #taskIndex = 0
     if agentSource is not None:
-        #for agent in agentSource:
-        for i in range(len(agentSource)):
-            agent = agentSource[agentIndex]
+        for agent in list(agentSource):
+        #for i in range(len(agentSource)):
+            #agent = agentSource[agentIndex]
             if taskSource is not None:
-                #for task in taskSource:
-                for j in range(len(taskSource)):
-                    task = taskSource[j]
+                for task in list(taskSource):
+                #for j in range(len(taskSource)):
+                    #task = taskSource[j]
                     #if task type matches agent type
                     if task.taskType in agent.skillType:
                         #update necessary info
@@ -197,8 +197,8 @@ def Assign(agentSource, busyAgents, taskSource, claimedTasks, timeFactor):
                         #after first match is found, break tasks loop and go to next agent 
                         break
                     #if the types don;t match and this is the last task in the list, move on to next index
-                    elif  (j == len(taskSource)):
-                        agentIndex += 1
+                   # elif  (j == len(taskSource)):
+                        #agentIndex += 1
                         
                
                 
@@ -227,13 +227,13 @@ If the time required is 0 , the task is moved to the complete task list
 def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationTimer):
     #debug change!
     numFinishedTasks = 0
-    agentIndex = 0
-    taskIndex = 0
+    #agentIndex = 0
+    #taskIndex = 0
     if claimedTasks is not None:
         #print("claimedTasks is not empty")
-        #for task in claimedTasks:
-        for i in range(len(claimedTasks)):
-            task = claimedTasks[taskIndex]
+        for task in list(claimedTasks):
+        #for i in range(len(claimedTasks)):
+            #task = claimedTasks[taskIndex]
             
             #work on task by subtracting 1
             task.timeRequired = task.timeRequired - 1
@@ -251,9 +251,9 @@ def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationT
                 #increase numFinishedTasks
                 numFinishedTasks = numFinishedTasks + 1
         #if no tasks have been completed, increase stagnationTimer
-            else:
-               agentIndex += 1
-               taskIndex += 1
+            #else:
+              # agentIndex += 1
+               #taskIndex += 1
             
     log(str(numFinishedTasks) + " tasks were finished")
     return numFinishedTasks
@@ -300,16 +300,16 @@ Parameters (Type Name):
 """    
 def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents):
     numTrades = 0
-    agentIndex = 0
-    taskIndex = 0
+    #agentIndex = 0
+    #taskIndex = 0
     if competingAgents is not None:
-        #for agent in competingAgents:
-        for i in range(len(competingAgents)):
-            agent = competingAgents[agentIndex]
+        for agent in list(competingAgents):
+        #for i in range(len(competingAgents)):
+            #agent = competingAgents[agentIndex]
             if claimedTasks is not None:
-                #for task in claimedTasks:
-                for j in range(len(claimedTasks)):
-                    task = claimedTasks[taskIndex]
+                for task in list(claimedTasks):
+                #for j in range(len(claimedTasks)):
+                    #task = claimedTasks[taskIndex]
                     if task.taskType == agent.skillType and agent.skillStrength < task.timeRequired:
                         #if competing agent is better, search the list for weaker agent
                         for agent2 in busyAgents:
@@ -322,8 +322,8 @@ def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents):
                         task.timeRequired = math.ceil(agent.skillStrength)
                         numTrades += 1
                         break                           
-                    elif  (j == len(claimedTasks)):
-                        agentIndex += 1
+                    #elif  (j == len(claimedTasks)):
+                        #agentIndex += 1
     log("Number of trades made in the competition: "+ str(numTrades))
     
 def accessSkillTypes(idleAgents, unclaimedTasks):
@@ -416,14 +416,14 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
         #increase time
         #timer += 1
        
-       
+        """
             
         #temerarily move idleAgents to competingAgents
         log("\n") 
         log("Competing agents are generated:")
         log("old size of idleAgents: " + str(len(blackboard.idleAgents)))
         log("old size of competingAgents: " + str(len(blackboard.competingAgents)))
-        MakeCompetitors(blackboard.idleAgents, blackboard.competingAgents)
+        MakeCompetitors(blackboard.idleAgents + blackboard.competingAgents)
         log("updated size of idleAgents: " + str(len(blackboard.idleAgents)))
         log("updated size of competingAgents: " + str(len(blackboard.competingAgents)))
         
@@ -453,6 +453,7 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
         
         #agents work again
         """
+        """
         log("\n")
         log("Agents work on claimedTasks:")
         numTasksCompleted = AgentsWork(blackboard.busyAgents, blackboard.idleAgents, blackboard.claimedTasks, blackboard.completedTasks, stagnationTimer)
@@ -476,7 +477,7 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
     print("Simulation Results:")
     incompleteTasks = numTasks - len(blackboard.completedTasks)
     score = (scorecoeff * timer) - penalty * (incompleteTasks) 
-    print("Number of agents: " + str(numAgents) + "      Fox Ratio: " + str(foxhedge) + "      Hedgehog Ratio: " + str(1-foxhedge))
+    print("Number of agents: " + str(numAgents) + "      % Fox: " + str(foxhedge) + "     % Hedgehog: " + str(1-foxhedge))
     print("Completed "+ str(len(blackboard.completedTasks)) + " out of "+ str(numTasks)+ " tasks")
     print("Time required: "+ str(timer))
     print("Score: " + str(score))
@@ -501,10 +502,11 @@ Parameters:
 #simulation(10, 3, 4, 10, .2, 0.1, 0.1)
 
 def main():
-       simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
-       simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
-       simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
-       simulation(10, 2000, 100, 1000, .8, 0.1, 0.1)
+       simulation(10, 3, 4, 1, 0.2, 0.1, 0.1) 
+       #simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
+       #simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
+       #simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
+       #simulation(10, 2000, 100, 1000, .8, 0.1, 0.1)
     
 main()
     
