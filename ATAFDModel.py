@@ -97,6 +97,7 @@ def Initialization(blackboard, numAgents, numTasks, foxHedge, timeFactor):
     
     
     #determine number of foxes and hedges from foxhedge ratio
+    #if the foxhedge ratio doesn't divide numAgents cleanly, round up the number of foxes
     #debug change!
     numFox = int(math.ceil(numAgents*foxHedge))
     numHedge = numAgents - numFox
@@ -338,36 +339,47 @@ def accessSkillTypes(idleAgents, unclaimedTasks):
     for task in unclaimedTasks:
         taskSkillTypes.add(task.taskType)
         
-    numSkillsMissing = taskSkillTypes -  agentSkillTypes
+    skillsMissing = taskSkillTypes -  agentSkillTypes
     log("\n")
-    log("Number of task types that cannot be solved by any agent: "+str(len(numSkillsMissing)))
-    log("Task types are: "+ str(numSkillsMissing))
+    log("Number of task types that cannot be solved by any agent: "+str(len(skillsMissing)))
+    log("Task types are: "+ str(skillsMissing))
     #print("\n")
-    #print("Number of task types that cannot be solved by any agent: "+str(len(numSkillsMissing)))
-    #print("Task types are: "+ str(numSkillsMissing))
+    #print("Number of task types that cannot be solved by any agent: "+str(len(skillsMissing)))
+    #print("Task types are: "+ str(skillsMissing))
     
 """
 """     
 def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     
+    log("Beginning Simulation:")
+
+    #Print the parameters that the program runs on
+    log("\n")
+    log("Parameters inputted:")
+    log("time factor = " + str(timeFactor))
+    log("stagnation factor = " + str(stagnationFactor))
+    log("number of agents = " + str(numAgents))
+    log("number of tasks = " + str(numTasks))
+    log("foxhedge ratio = at least " + str(foxhedge*100) + " percent foxes") 
+    #TODO: clarify in words what  penalty and score coefficient do
+    log("penalty for incomplete tasks = " + str(penalty))
+    log("score coefficient = " + str(scorecoeff))
     
     #start timers at 0
     timer = 0
     stagnationTimer = 0
-    
-    
-    log("Beginning Simulation:")
+    log("\n")
+    log("Timers and numbers of agents:")
     log("timer = "+ str(timer) )
-    
+    log("stagnation timer = " + str(stagnationTimer))  
     
     #create blackboard object
     blackboard = Blackboard(numTasks)
-    log("stagnation timer = " + str(stagnationTimer))
-
     #generate agents and tasks
     Initialization(blackboard, numAgents, numTasks, foxhedge, timeFactor)
     
-    log("Agents and tasks have been initialized: ")
+    log("\n")
+    log("Agents and tasks have been initialized:")
     if blackboard.idleAgents is None:
         log("idleAgents is empty")
     else:
@@ -379,7 +391,7 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
     if blackboard.unclaimedTasks is None:
         log("unclaimedTasks is empty")
     else:    
-        log("Size of unclaimedTasks list " + str(len(blackboard.unclaimedTasks)))
+        log("Size of unclaimedTasks list: " + str(len(blackboard.unclaimedTasks)))
         for task in blackboard.unclaimedTasks:
             log("task taskType: " + str(task.taskType))
             
@@ -402,7 +414,8 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
         log("updated size of busyAgents: " + str(len(blackboard.busyAgents)))
         log("updated size of unclaimedTasks: " + str(len(blackboard.unclaimedTasks)))
         log("updated size of claimedTasks: " + str(len(blackboard.claimedTasks)))
-        
+        for task in blackboard.claimedTasks:
+            log("agent ID: " + str(task.agentAssigned) + " is working on taskType " + str(task.taskType) + ". timeRequired: " + str(task.timeRequired))
         
         #agents do one time step of work on claimed tasks
         log("\n")
@@ -476,11 +489,10 @@ def simulation(timeFactor, stagnationFactor, numAgents, numTasks, foxhedge, pena
     print("\n")
     print("Simulation Results:")
     incompleteTasks = numTasks - len(blackboard.completedTasks)
-    score = (scorecoeff * timer) - penalty * (incompleteTasks) 
+    score = (scorecoeff * timer) + penalty * (incompleteTasks) 
     print("Number of agents: " + str(numAgents) + "      % Fox: " + str(foxhedge) + "     % Hedgehog: " + str(1-foxhedge))
     print("Completed "+ str(len(blackboard.completedTasks)) + " out of "+ str(numTasks)+ " tasks")
-    print("Time required: "+ str(timer))
-    print("Score: " + str(score))
+    print("Time taken: "+ str(timer))
     
    #return 
    
@@ -502,7 +514,7 @@ Parameters:
 #simulation(10, 3, 4, 10, .2, 0.1, 0.1)
 
 def main():
-       simulation(10, 3, 4, 1, 0.2, 0.1, 0.1) 
+       simulation(10, 10, 4, 1, 0.2, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
