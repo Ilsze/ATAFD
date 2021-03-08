@@ -20,7 +20,7 @@ import math
 from statistics import mean 
 
 #To use debugging print statements set DEBUG to True
-DEBUG = False
+DEBUG = True
 
 def log(s):
     if DEBUG:
@@ -335,6 +335,8 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     idleAgentsSize = []
     busyAgentsSize = []
     completedTasks = []
+    unclaimedTasks = []
+    claimedTasks = []
     time = []
     
     #start timers at 0
@@ -369,6 +371,8 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     idleAgentsSize.append(len(blackboard.idleAgents))
     busyAgentsSize.append(len(blackboard.busyAgents))
     completedTasks.append(len(blackboard.completedTasks))
+    unclaimedTasks.append(len(blackboard.unclaimedTasks))
+    claimedTasks.append(len(blackboard.claimedTasks))
     time.append(0)
     
     #start simulation loop
@@ -439,6 +443,8 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         idleAgentsSize.append(len(blackboard.idleAgents))
         busyAgentsSize.append(len(blackboard.busyAgents))
         completedTasks.append(len(blackboard.completedTasks))
+        unclaimedTasks.append(len(blackboard.unclaimedTasks))
+        claimedTasks.append(len(blackboard.claimedTasks))
         time.append(k)
         
     log("\n")
@@ -466,19 +472,21 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     print("score: ", score)
     print("Time taken: "+ str(timer))
     
-    """
+
     plt.figure(1)
     plt.plot(time, idleAgentsSize, label = "idleAgents")
     plt.plot(time, busyAgentsSize, label = "busyAgents")
+    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
+    #plt.plot(time, claimedTasks, label = "claimedTasks")
     plt.xlabel('Time')
-    plt.ylabel('Number of agents')
+    plt.ylabel('Number of agents/tasks')
     plt.legend()
     
     plt.figure(2)
     plt.plot(time, completedTasks, label = "completedTasks")
     plt.xlabel('Time')
     plt.ylabel('Number of completed tasks')
-    """
+   
     
     return [score, timer]
    
@@ -501,10 +509,14 @@ Parameters:
 
 def main():
     
+       import sys
+       sys.stdout=open("test3.txt","w")
+
        
 
 
-       #simulation(1,  4, 1, 0.2, 0.1, 0.1) 
+       simulation(1, 10, 15, 0.2, 0.1, 0.1) 
+       """
        #simulation(10, 100, 1000, .1, 0.1, 0.1)
        simulation(10, 100, 1000, .2, 0.1, 0.1)
        #simulation(10, 100, 1000, .3, 0.1, 0.1)
@@ -513,6 +525,9 @@ def main():
        simulation(10, 100, 1000, .6, 0.1, 0.1) 
        #simulation(10, 100, 1000, .7, 0.1, 0.1)
        simulation(10, 100, 1000, .8, 0.1, 0.1)
+       """
+       
+       sys.stdout.close()
        
        
        
