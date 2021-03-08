@@ -17,9 +17,10 @@ import matplotlib.pyplot as plt
 import random
 from random import randint
 import math
+from statistics import mean 
 
 #To use debugging print statements set DEBUG to True
-DEBUG = True
+DEBUG = False
 
 def log(s):
     if DEBUG:
@@ -354,12 +355,12 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     for agent in agentList:
             log("agent ID: "+ str(agent.ID) + ", agent skillType: " + str(agent.skillType))
             
-    print("\n")
+    log("\n")
     log("Tasks:")    
     for task in taskList:
             log("TaskID: "+ str(task.taskID) + ", task type: "+ str(task.taskType))
             
-    print("\n")
+    log("\n")
     
     #are any tasks unsolvable     
     accessSkillTypes(blackboard.idleAgents, blackboard.unclaimedTasks)
@@ -374,9 +375,9 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     k = 1
     #stagnationTimer < stagnationFactor
     while(numTasks != len(blackboard.completedTasks) and stagnationTimer < stagnationFactor):
-        print("\n")
+        log("\n")
         log("While loop run:" + str(k))
-        print("\n")
+        log("\n")
     
         
         #assign unclaimed tasks      
@@ -465,6 +466,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     print("score: ", score)
     print("Time taken: "+ str(timer))
     
+    """
     plt.figure(1)
     plt.plot(time, idleAgentsSize, label = "idleAgents")
     plt.plot(time, busyAgentsSize, label = "busyAgents")
@@ -476,8 +478,9 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     plt.plot(time, completedTasks, label = "completedTasks")
     plt.xlabel('Time')
     plt.ylabel('Number of completed tasks')
+    """
     
-   #return 
+    return [score, timer]
    
     
 
@@ -497,11 +500,24 @@ Parameters:
 #simulation(10, 3, 4, 10, .2, 0.1, 0.1)
 
 def main():
-       simulation(1,  4, 1, 0.2, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .8, 0.1, 0.1)
+    
+       
+
+
+       #simulation(1,  4, 1, 0.2, 0.1, 0.1) 
+       #simulation(10, 100, 1000, .1, 0.1, 0.1)
+       simulation(10, 100, 1000, .2, 0.1, 0.1)
+       #simulation(10, 100, 1000, .3, 0.1, 0.1)
+       simulation(10, 100, 1000, .2, 0.1, 0.1)
+       #simulation(10, 100, 1000, .5, 0.1, 0.1)
+       simulation(10, 100, 1000, .6, 0.1, 0.1) 
+       #simulation(10, 100, 1000, .7, 0.1, 0.1)
+       simulation(10, 100, 1000, .8, 0.1, 0.1)
+       
+       
+       
+     
+       
     
 main()
     

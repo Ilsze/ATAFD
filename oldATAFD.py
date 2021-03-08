@@ -21,7 +21,7 @@ from random import randint
 import math
 
 #To use debugging print statements set DEBUG to True
-DEBUG = True
+DEBUG = False
 
 def log(s):
     if DEBUG:
@@ -504,10 +504,10 @@ Parameters:
 #simulation(10, 3, 4, 10, .2, 0.1, 0.1)
 
 def main():
-       simulation(10, 3, 4, 1, 0.2, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
-       #simulation(10, 2000, 100, 1000, .8, 0.1, 0.1)
+       simulation(10,3, 4, 1, 0.2, 0.1, 0.1) 
+       simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
+       simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
+       simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
+       simulation(10, 2000, 100, 1000, .8, 0.1, 0.1)
     
 main()

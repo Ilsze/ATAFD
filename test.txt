@@ -1,0 +1,28 @@
+
+
+Simulation Results:
+Number of agents: 100      % Fox: 0.2     % Hedgehog: 0.8
+Completed 1000 out of 1000 tasks
+score:  30.0
+Time taken: 300
+
+
+Simulation Results:
+Number of agents: 100      % Fox: 0.2     % Hedgehog: 0.8
+Completed 1000 out of 1000 tasks
+score:  24.0
+Time taken: 240
+
+
+Simulation Results:
+Number of agents: 100      % Fox: 0.6     % Hedgehog: 0.4
+Completed 1000 out of 1000 tasks
+score:  32.0
+Time taken: 320
+
+
+Simulation Results:
+Number of agents: 100      % Fox: 0.8     % Hedgehog: 0.19999999999999996
+Completed 1000 out of 1000 tasks
+score:  40.0
+Time taken: 400
