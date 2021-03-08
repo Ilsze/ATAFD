@@ -1,0 +1,84 @@
+Agents:
+agent ID: 3, agent skillType: {1}
+agent ID: 1, agent skillType: {2}
+agent ID: 0, agent skillType: {1, 2, 3, 4, 5, 6, 8}
+agent ID: 2, agent skillType: {2}
+
+
+Tasks:
+TaskID: 0, task type: 5
+
+
+
+
+While loop run:1
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 7
+completed 0 out of 1 tasks
+stagnation timer: 1
+
+
+While loop run:2
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 6
+completed 0 out of 1 tasks
+stagnation timer: 2
+
+
+While loop run:3
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 5
+completed 0 out of 1 tasks
+stagnation timer: 3
+
+
+While loop run:4
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 4
+completed 0 out of 1 tasks
+stagnation timer: 4
+
+
+While loop run:5
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 3
+completed 0 out of 1 tasks
+stagnation timer: 5
+
+
+While loop run:6
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 2
+completed 0 out of 1 tasks
+stagnation timer: 6
+
+
+While loop run:7
+
+
+Task ID: 0, type: 5 Agent assigned (ID): 0 Time Required: 1
+completed 1 out of 1 tasks
+stagnation timer: 0
+
+
+Parameters inputted:
+time factor = 1
+stagnation factor = 7
+number of agents = 4
+number of tasks = 1
+foxhedge ratio = at least 20.0 percent foxes
+penalty for incomplete tasks = 0.1
+score coefficient = 0.1
+
+
+Simulation Results:
+Number of agents: 4      % Fox: 0.2     % Hedgehog: 0.8
+Completed 1 out of 1 tasks
+score:  0.7000000000000001
+Time taken: 7
