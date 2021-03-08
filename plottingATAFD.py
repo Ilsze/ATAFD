@@ -44,6 +44,7 @@ class Agent:
         
         length = 0
         while length < skillLength:
+            #skill types range from 0 to 9
             self.skillType.add(randint(0, 9))
             length =  len(self.skillType)
        
@@ -56,6 +57,7 @@ Tasks:
 
 class Task:
      def __init__(self, taskID):
+         #task types tange from 0 to 9
         self.taskType = randint(0, 9)
         self.taskID = taskID
         #set to -1 when no agent is assigned
@@ -106,6 +108,7 @@ def Initialization(blackboard, numAgents, numTasks, foxHedge, timeFactor):
     #generate skill length for each fox with uniform distribution
     skillLength = np.random.randint(low = 3, high = 11, size = numFox)
     maxSkillLength = max(skillLength)
+    #stagnationFactor is the longest skill length multiplied by the time factor (the longest length of time it should take any agent to solve a task)
     stagnationFactor = maxSkillLength * timeFactor
     #create foxes
     for i in range(numFox):
@@ -140,11 +143,11 @@ Paramters (Type Name):
     List[Task] destination - list it's being moved to
 """   
 def MoveTask(toBeMoved, source, destination): 
-    ##if toBeMoved in source:
-    #remove task from source list
-    source.remove(toBeMoved)
-    #add task to destination list
-    destination.append(toBeMoved)
+    if toBeMoved in source:
+        #remove task from source list
+        source.remove(toBeMoved)
+        #add task to destination list
+        destination.append(toBeMoved)
     
 """
 MoveAgent:
@@ -156,10 +159,11 @@ Parameters (Type Name):
 """   
 
 def MoveAgent(toBeMoved, source, destination): 
-    #remove agent from source list
-    source.remove(toBeMoved)
-    #add agent to destination list
-    destination.append(toBeMoved)
+    if toBeMoved in source:
+        #remove agent from source list
+        source.remove(toBeMoved)
+        #add agent to destination list
+        destination.append(toBeMoved)
     
 """
 Assign:
@@ -360,10 +364,12 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     #are any tasks unsolvable     
     accessSkillTypes(blackboard.idleAgents, blackboard.unclaimedTasks)
     
+    #for plots (initial sizes)
     idleAgentsSize.append(len(blackboard.idleAgents))
     busyAgentsSize.append(len(blackboard.busyAgents))
     completedTasks.append(len(blackboard.completedTasks))
     time.append(0)
+    
     #start simulation loop
     k = 1
     #stagnationTimer < stagnationFactor
@@ -423,6 +429,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         """
 
         log("completed " + str(len(blackboard.completedTasks)) + " out of " + str(numTasks)+ " tasks")
+        log("stagnation timer: " + str(stagnationTimer))
         
        # print("stagnationTimer = ", stagnationTimer)
         timer += 1
@@ -436,6 +443,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     log("\n")
     log("Parameters inputted:")
     log("time factor = " + str(timeFactor))
+    log("stagnation factor = " + str(stagnationFactor))
     #log("stagnation factor = " + str(stagnationFactor))
     log("number of agents = " + str(numAgents))
     log("number of tasks = " + str(numTasks))
@@ -457,12 +465,17 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     print("score: ", score)
     print("Time taken: "+ str(timer))
     
+    plt.figure(1)
     plt.plot(time, idleAgentsSize, label = "idleAgents")
     plt.plot(time, busyAgentsSize, label = "busyAgents")
-    plt.plot(time, completedTasks, label = "completedTasks")
     plt.xlabel('Time')
     plt.ylabel('Number of agents')
     plt.legend()
+    
+    plt.figure(2)
+    plt.plot(time, completedTasks, label = "completedTasks")
+    plt.xlabel('Time')
+    plt.ylabel('Number of completed tasks')
     
    #return 
    
@@ -484,7 +497,7 @@ Parameters:
 #simulation(10, 3, 4, 10, .2, 0.1, 0.1)
 
 def main():
-       simulation(3,  4, 5, 0.2, 0.1, 0.1) 
+       simulation(1,  4, 1, 0.2, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .2, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .4, 0.1, 0.1) 
        #simulation(10, 2000, 100, 1000, .6, 0.1, 0.1) 
