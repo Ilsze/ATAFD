@@ -53,7 +53,7 @@ class Agent:
     
 """
 Tasks:
-    attributes (Type Name): Integer taskType, Integer agentAssigned, Float timeRequired, Float pendingTimerequired
+    attributes (Type Name): Integer taskType, Agent agentAssigned, Float timeRequired, Float pendingTimerequired
 """
 
 class Task:
@@ -61,8 +61,8 @@ class Task:
          #task types tange from 0 to 9
         self.taskType = randint(0, 9)
         self.taskID = taskID
-        #set to -1 when no agent is assigned
-        self.agentAssigned = -1
+        #set to blank Agent when no agent is assigned
+        self.agentAssigned = Agent(-1, 0)
         #set to -1 before task has been started by an agent
         self.timeRequired = -1
         
@@ -103,8 +103,7 @@ def Initialization(blackboard, numAgents, numTasks, foxHedge, timeFactor):
     #determine number of foxes and hedges from foxhedge ratio
     #if the foxhedge ratio doesn't divide numAgents cleanly, round up the number of foxe
     numFox = int(math.ceil(numAgents*foxHedge))
-    numHedge = numAgents - numFox
-    
+    numHedge = numAgents - numFox  
     
     #generate skill length for each fox with uniform distribution
     skillLength = np.random.randint(low = 3, high = 11, size = numFox)
@@ -192,7 +191,7 @@ def Assign(agentSource, busyAgents, taskSource, claimedTasks, timeFactor):
                     #if task type matches agent type
                     if task.taskType in agent.skillType:
                         #update necessary info
-                        task.agentAssigned = agent.ID
+                        task.agentAssigned = agent
                         task.timeRequired = timeFactor*agent.skillLength
                         #move the task to claimed tasks
                         MoveTask(task, taskSource, claimedTasks)
@@ -238,7 +237,7 @@ def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationT
                 MoveTask(task, claimedTasks, completedTasks)
                 #find the agent that was working on this task and move it to idle agents
                 for agent in busyAgents:
-                    if agent.ID == task.agentAssigned:
+                    if agent == task.agentAssigned:
                         completer = agent
                 MoveAgent(completer, busyAgents, idleAgents)
                 
@@ -274,31 +273,36 @@ def RemoveCompetitors(competingAgents, idleAgents):
     
 """
 Parameters (Type Name):
-    List[Agent] competingAgents
-    List[Agents] claimedTasks
+    List[Agents] competingAgents
+    List[Tasks]  claimedTasks
     List[Agents] busyAgents
+    List[Agents] idleAgents
+    Integer      timeFactor
 """    
-def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents):
+def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents, timeFactor):
     numTrades = 0
-    
-    if competingAgents is not None:
-        for agent in list(competingAgents):
+    if claimedTasks is not None:
+        log("iterating through list of claimedtasks...")
+        for task in list(claimedTasks):
+            for competingAgent in list(competingAgents):
+                #if competing agent is better than agent assigned, reassign claimed task
+                if task.taskType in competingAgent.skillType and (competingAgent.skillLength * timeFactor) < task.timeRequired:
+                    log("agent " + str(competingAgent.ID) + " takes task from agent " + str(task.agentAssigned.ID))
+                    #move weaker agent into idleAgents and strongerAgent into busyAgents
+                    MoveAgent(task.agentAssigned, busyAgents, idleAgents)
+                    MoveAgent(competingAgent, competingAgents, busyAgents)
+                    task.agentAssigned = competingAgent
+                    task.timeRequired = competingAgent.skillLength * timeFactor
+                    numTrades += 1
+                    break
+    log("Number of trades made in the competition: " + str(numTrades))                         
 
-            if claimedTasks is not None:
-                for task in list(claimedTasks):
-                    if task.taskType == agent.skillType and agent.skillStrength < task.timeRequired:
-                        #if competing agent is better, search the list for weaker agent
-                        for agent2 in busyAgents:
-                            if agent2.ID == task.assignedAgent:
-                                weakerAgent = agent2
-                                
-                        MoveAgent(weakerAgent, busyAgents, idleAgents)
-                        MoveAgent(agent, competingAgents, busyAgents) 
-                        task.agentAssigned = agent.ID
-                        task.timeRequired = math.ceil(agent.skillStrength)
-                        numTrades += 1
-                        break                           
-    
+
+"""
+Parameters (Type Name):
+    List[Agents] idleAgents
+    List[Tasks]  unclaimedTasks
+"""
 def accessSkillTypes(idleAgents, unclaimedTasks):
     agentSkillTypes = set()
     taskSkillTypes = set()
@@ -389,9 +393,9 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         
         #print detailed update:
         for task in blackboard.claimedTasks:
-            log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned) + " Time Required: " + str(task.timeRequired))
+            log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned.ID) + " Time Required: " + str(task.timeRequired))
         for task in blackboard.unclaimedTasks:
-             log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned) + " Time Required: " + str(task.timeRequired))
+             log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned.ID) + " Time Required: " + str(task.timeRequired))
          
        #agents do one time step of work on claimed tasks
         
@@ -417,7 +421,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         #random.shuffle(blackboard.claimedTasks)
         
         #main competing function
-        #Reassign(blackboard.competingAgents, blackboard.claimedTasks, blackboard.busyAgents, blackboard.idleAgents)
+        #Reassign(blackboard.competingAgents, blackboard.claimedTasks, blackboard.busyAgents, blackboard.idleAgents, timeFactor)
 
         #move agents in competing list back to idle list
        # RemoveCompetitors(blackboard.competingAgents, blackboard.idleAgents)
@@ -535,4 +539,3 @@ def main():
        
     
 main()
-    
