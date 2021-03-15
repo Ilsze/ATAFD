@@ -393,7 +393,8 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         
         #print detailed update:
         for task in blackboard.claimedTasks:
-             log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned.ID) + " Time Required: " + str(task.timeRequired))
+            log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned.ID) + " Time Required: " + str(task.timeRequired))
+        log("finished iterating through claimed tasks")
         for task in blackboard.unclaimedTasks:
              log("Task ID: " + str(task.taskID) + ", type: " + str(task.taskType) + " Agent assigned (ID): " + str(task.agentAssigned.ID) + " Time Required: " + str(task.timeRequired))
          
@@ -472,7 +473,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     incompleteTasks = numTasks - len(blackboard.completedTasks)
     score = (scorecoeff * timer) + penalty * (incompleteTasks) 
     print("Number of agents: " + str(numAgents) + "      % Fox: " + str(foxhedge) + "     % Hedgehog: " + str(1-foxhedge))
-    print("After working, agents complete "+ str(len(blackboard.completedTasks)) + " out of "+ str(numTasks)+ " tasks")
+    print("Completed "+ str(len(blackboard.completedTasks)) + " out of "+ str(numTasks)+ " tasks")
     print("score: ", score)
     print("Time taken: "+ str(timer))
     
@@ -485,7 +486,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     plt.xlabel('Time')
     plt.ylabel('Number of agents/tasks')
     plt.legend()
-    #plt.show()
+    plt.show()
     
     plt.figure(2)
     plt.plot(time, completedTasks, label = "completedTasks")
@@ -493,7 +494,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     plt.ylabel('Number of completed tasks')
    
     
-    return score ##, timer
+    return [score, timer]
    
     
 
@@ -517,30 +518,10 @@ def main():
        import sys
        sys.stdout=open("test3.txt","w")
 
-       foxhedgeArray = ([0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-       scoreList = []
-       masterScoreList = []
-        
-       print("foxhedge array:")
-       print(foxhedgeArray)       	    
-
-       #run simulation i times
-
-       i = 10
-       while(i > 0):
-             for ratio in foxhedgeArray:
-                 score = simulation(1, 10, 15, ratio, 0.1, 0.1)
-                 scoreList.append(score)
-             masterScoreList.append(mean(scoreList))
-             i = i - 1
-
-       #print(str(simulation(1, 10, 15, 0.2, 0.1, 0.1)))
-       print('score list:')
-       print(scoreList)
-
-       scoreArray = np.array(masterScoreList)
        
 
+
+       simulation(2, 10, 15, 0.2, 0.1, 0.1) 
        """
        #simulation(10, 100, 1000, .1, 0.1, 0.1)
        simulation(10, 100, 1000, .2, 0.1, 0.1)
@@ -551,12 +532,6 @@ def main():
        #simulation(10, 100, 1000, .7, 0.1, 0.1)
        simulation(10, 100, 1000, .8, 0.1, 0.1)
        """
-       
-       plt.figure(3)
-       plt.plot(foxhedgeArray, scoreArray)
-       plt.xlabel("Proportion of Foxes")
-       plt.ylabel("Score")
-       plt.show()
        
        sys.stdout.close()
        
