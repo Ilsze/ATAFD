@@ -20,7 +20,7 @@ import math
 from statistics import mean 
 
 #To use debugging print statements set DEBUG to True
-DEBUG = True
+DEBUG = False
 
 def log(s):
     if DEBUG:
@@ -514,52 +514,72 @@ Parameters:
 
 def main():
     
-       import sys
-       sys.stdout=open("test3.txt","w")
+    import sys
+    sys.stdout=open("test3.txt","w")
 
-       foxhedgeArray = ([0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-       scoreList = []
-       masterScoreList = []
-        
-       print("foxhedge array:")
-       print(foxhedgeArray)       	    
+    #user sets foxhedge ratios she's interested in using foxhedgeArray])
+    foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+    foxhedgeArraySize = len(foxhedgeArray)
+    masterScoreList = []
+    meanScores = []
 
-       #run simulation i times
+    #generate as many lists as there are foxhedge ratios
+    i = 0
+    while(i < foxhedgeArraySize):
+    	temp = []
+    	masterScoreList.append(temp)
+    	i += 1
 
-       i = 10
-       while(i > 0):
-             for ratio in foxhedgeArray:
-                 score = simulation(1, 10, 15, ratio, 0.1, 0.1)
-                 scoreList.append(score)
-             masterScoreList.append(mean(scoreList))
-             i = i - 1
+    #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
+    numRuns = 20
+    while(numRuns > 0):
+        index = 0
+        for ratio in foxhedgeArray:
+            score = simulation(2, 10, 15, ratio, 0.1, 0.1)
+            masterScoreList[index].append(score)
+            index += 1
+        numRuns -= 1
 
-       #print(str(simulation(1, 10, 15, 0.2, 0.1, 0.1)))
-       print('score list:')
-       print(scoreList)
+    #find the mean of each sublist
+    j = 0
+    while(j < len(masterScoreList)):
+    	meanScores.append(mean(masterScoreList[j]))
+    	j += 1
 
-       scoreArray = np.array(masterScoreList)
+    #print(str(simulation(1, 10, 15, 0.2, 0.1, 0.1)))
+    print("foxhedge array:")
+    print(foxhedgeArray)
+    print('MasterScoreList:')
+    print(masterScoreList)
+    print('meanScores: ')
+    print(meanScores)
+    
+    plt.figure(3)
+    plt.scatter(foxhedgeArray, meanScores)
+    plt.xlabel("Proportion of Foxes")
+    plt.ylabel("Score")
+    plt.show()
+
+    """
+    #simulation(10, 100, 1000, .1, 0.1, 0.1)
+    simulation(10, 100, 1000, .2, 0.1, 0.1)
+    #simulation(10, 100, 1000, .3, 0.1, 0.1)
+    simulation(10, 100, 1000, .2, 0.1, 0.1)
+    #simulation(10, 100, 1000, .5, 0.1, 0.1)
+    simulation(10, 100, 1000, .6, 0.1, 0.1) 
+    #simulation(10, 100, 1000, .7, 0.1, 0.1)
+    simulation(10, 100, 1000, .8, 0.1, 0.1)
+    """
+       
+    
+    
+    
+
+    sys.stdout.close()
        
 
-       """
-       #simulation(10, 100, 1000, .1, 0.1, 0.1)
-       simulation(10, 100, 1000, .2, 0.1, 0.1)
-       #simulation(10, 100, 1000, .3, 0.1, 0.1)
-       simulation(10, 100, 1000, .2, 0.1, 0.1)
-       #simulation(10, 100, 1000, .5, 0.1, 0.1)
-       simulation(10, 100, 1000, .6, 0.1, 0.1) 
-       #simulation(10, 100, 1000, .7, 0.1, 0.1)
-       simulation(10, 100, 1000, .8, 0.1, 0.1)
-       """
-       
-       plt.figure(3)
-       plt.plot(foxhedgeArray, scoreArray)
-       plt.xlabel("Proportion of Foxes")
-       plt.ylabel("Score")
-       plt.show()
-       
-       sys.stdout.close()
-       
+
+      
        
        
      
