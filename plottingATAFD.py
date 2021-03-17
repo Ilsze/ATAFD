@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import random
 from random import randint
 import math
-from statistics import mean 
+import statistics
 
 #To use debugging print statements set DEBUG to True
 DEBUG = False
@@ -522,6 +522,7 @@ def main():
     foxhedgeArraySize = len(foxhedgeArray)
     masterScoreList = []
     meanScores = []
+    medianScores = []
 
     #generate as many lists as there are foxhedge ratios
     i = 0
@@ -531,7 +532,7 @@ def main():
     	i += 1
 
     #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
-    numRuns = 20
+    numRuns = 100
     while(numRuns > 0):
         index = 0
         for ratio in foxhedgeArray:
@@ -540,10 +541,11 @@ def main():
             index += 1
         numRuns -= 1
 
-    #find the mean of each sublist
+    #find the mean and median of each sublist
     j = 0
     while(j < len(masterScoreList)):
-    	meanScores.append(mean(masterScoreList[j]))
+    	meanScores.append(statistics.mean(masterScoreList[j]))
+    	medianScores.append(statistics.median(masterScoreList[j]))
     	j += 1
 
     #print(str(simulation(1, 10, 15, 0.2, 0.1, 0.1)))
@@ -556,8 +558,14 @@ def main():
     
     plt.figure(3)
     plt.scatter(foxhedgeArray, meanScores)
-    plt.xlabel("Proportion of Foxes")
-    plt.ylabel("Score")
+    plt.xlabel("Proportion of Generalists")
+    plt.ylabel("Mean Scores")
+    plt.show()
+
+    plt.figure(4)
+    plt.scatter(foxhedgeArray, medianScores)
+    plt.xlabel("Proportion of Generalists")
+    plt.ylabel("Median Scores")
     plt.show()
 
     """
