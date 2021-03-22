@@ -637,8 +637,8 @@ def main():
         for ratio in foxhedgeArray:
             #timeFactor = 2, 10 agents, 15 tasks, ratio
             timeFactor = 2
-            numAgents = 10
-            numTasks = 15
+            numAgents = 100
+            numTasks = 1000
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
@@ -666,8 +666,8 @@ def main():
             trialScores = []
             for run in range(numRuns):
                 timeFactor = tf
-                numAgents = 10
-                numTasks = 15
+                numAgents = 100
+                numTasks = 1000
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
