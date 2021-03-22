@@ -566,8 +566,8 @@ def plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, n
             y.append(l[n])
         plt.scatter(x, y, label = "Run: " + str(n+1))
         #plt.scatter(x, y)
-        m, b = np.polyfit(x, y, 1)
-        plt.plot(x, m*x + b)
+       # m, b = np.polyfit(x, y, 1)
+       # plt.plot(x, m*x + b)
     
     plt.title('Score vs. Proportion of Generalists')
     plt.xlabel("Proportion of Generalists")
@@ -638,7 +638,7 @@ def main():
             #timeFactor = 2, 10 agents, 15 tasks, ratio
             timeFactor = 2
             numAgents = 100
-            numTasks = 1000
+            numTasks = 150
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
@@ -667,7 +667,7 @@ def main():
             for run in range(numRuns):
                 timeFactor = tf
                 numAgents = 100
-                numTasks = 1000
+                numTasks = 150
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
