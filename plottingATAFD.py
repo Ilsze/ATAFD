@@ -333,7 +333,7 @@ def accessSkillTypes(idleAgents, unclaimedTasks):
   
 """
 """     
-def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
+def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime):
     
     #for plotting agent lists
     idleAgentsSize = []
@@ -480,21 +480,9 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
 #Plots Agents/Tasks vs Time and Number completed tasks vs time (for 1 simulation run)
      #Would like turn this into a function
      
-    """
-    plt.figure(1)
-    plt.plot(time, idleAgentsSize, label = "idleAgents")
-    plt.plot(time, busyAgentsSize, label = "busyAgents")
-    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
-    #plt.plot(time, claimedTasks, label = "claimedTasks")
-    plt.title('Number of Agents vs. Time')
-    plt.xlabel('Time')
-    plt.ylabel('Number of Agents')
-    plt.legend(loc = 'upper right', bbox_to_anchor=(1.32, 1.025), fancybox=True)
-    #plt.legend()
-    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
-    plt.subplots_adjust(bottom=0.15)
-    plt.show()
-    """
+    
+    
+    
     """
     plt.figure(2)
     plt.plot(time, completedTasks, label = "completedTasks")
@@ -505,7 +493,9 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     plt.subplots_adjust(bottom=0.15)
     plt.show()
     """
-   
+    masterIdleSize.append(idleAgentsSize)
+    masterBusySize.append(busyAgentsSize)
+    masterTime.append(time)
     
     return score ##, timer
    
@@ -596,9 +586,22 @@ def plotScoreTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, scor
     plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
     plt.subplots_adjust(bottom=0.15)
     plt.show()        
-        
-    
-        
+       
+#THIS FUNCTION DOESNT WORK
+def plotNumAgentsTasksVsTime(timeFactor, numAgents, numTasks, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime):
+    plt.figure(1)
+    plt.plot(masterTime, masterIdleSize, label = "idleAgents")
+    plt.plot(masterTime, masterBusySize, label = "busyAgents")
+    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
+    #plt.plot(time, claimedTasks, label = "claimedTasks")
+    plt.title('Number of Agents vs. Time')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Agents')
+    plt.legend(loc = 'upper right', bbox_to_anchor=(1.32, 1.025), fancybox=True)
+    #plt.legend()
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
         
 
 """
@@ -612,6 +615,12 @@ Parameters:
 
 def main():
     
+    #plot for numAgentsTasks vs Time
+    masterIdleSize = []
+    masterBusySize = []
+    masterTime = []
+
+
     #Plots for mean and median score vs time (over multiple trials)
     
     import sys
@@ -642,12 +651,13 @@ def main():
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
-            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
             masterScoreList[index].append(score)
             index += 1
         numRuns -= 1
-        
-    plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
+
+    #plotNumAgentsTasksVsTime(timeFactor, numAgents, numTasks, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
+    #plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
 
    #testing time factor
     numRuns = 100
@@ -671,7 +681,7 @@ def main():
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
-                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
                 trialScores.append(score)
                 
             avg = statistics.mean(trialScores)
@@ -695,22 +705,12 @@ def main():
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
-            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
             masterScoreList[index].append(score)
             index += 1
         numRuns -= 1
         
     plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList) 
-    """
-    """
-    #simulation(10, 100, 1000, .1, 0.1, 0.1)
-    simulation(10, 100, 1000, .2, 0.1, 0.1)
-    #simulation(10, 100, 1000, .3, 0.1, 0.1)
-    simulation(10, 100, 1000, .2, 0.1, 0.1)
-    #simulation(10, 100, 1000, .5, 0.1, 0.1)
-    simulation(10, 100, 1000, .6, 0.1, 0.1) 
-    #simulation(10, 100, 1000, .7, 0.1, 0.1)
-    simulation(10, 100, 1000, .8, 0.1, 0.1)
     """
        
     
