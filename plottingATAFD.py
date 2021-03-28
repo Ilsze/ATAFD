@@ -18,7 +18,7 @@ import random
 from random import randint
 import math
 import statistics
-
+from mpl_toolkits import mplot3d
 #To use debugging print statements set DEBUG to True
 DEBUG = False
 
@@ -333,7 +333,7 @@ def accessSkillTypes(idleAgents, unclaimedTasks):
   
 """
 """     
-def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime):
+def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     
     #for plotting agent lists
     idleAgentsSize = []
@@ -480,9 +480,21 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, m
 #Plots Agents/Tasks vs Time and Number completed tasks vs time (for 1 simulation run)
      #Would like turn this into a function
      
-    
-    
-    
+    """
+    plt.figure(1)
+    plt.plot(time, idleAgentsSize, label = "idleAgents")
+    plt.plot(time, busyAgentsSize, label = "busyAgents")
+    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
+    #plt.plot(time, claimedTasks, label = "claimedTasks")
+    plt.title('Number of Agents vs. Time')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Agents')
+    plt.legend(loc = 'upper right', bbox_to_anchor=(1.32, 1.025), fancybox=True)
+    #plt.legend()
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
+    """
     """
     plt.figure(2)
     plt.plot(time, completedTasks, label = "completedTasks")
@@ -493,9 +505,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, m
     plt.subplots_adjust(bottom=0.15)
     plt.show()
     """
-    masterIdleSize.append(idleAgentsSize)
-    masterBusySize.append(busyAgentsSize)
-    masterTime.append(time)
+   
     
     return score ##, timer
    
@@ -586,22 +596,13 @@ def plotScoreTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, scor
     plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
     plt.subplots_adjust(bottom=0.15)
     plt.show()        
-       
-#THIS FUNCTION DOESNT WORK
-def plotNumAgentsTasksVsTime(timeFactor, numAgents, numTasks, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime):
-    plt.figure(1)
-    plt.plot(masterTime, masterIdleSize, label = "idleAgents")
-    plt.plot(masterTime, masterBusySize, label = "busyAgents")
-    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
-    #plt.plot(time, claimedTasks, label = "claimedTasks")
-    plt.title('Number of Agents vs. Time')
-    plt.xlabel('Time')
-    plt.ylabel('Number of Agents')
-    plt.legend(loc = 'upper right', bbox_to_anchor=(1.32, 1.025), fancybox=True)
-    #plt.legend()
-    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
-    plt.subplots_adjust(bottom=0.15)
-    plt.show()
+        
+    
+#plots score as number of agents and proportion of generalist are varied
+def plot3DAgentsNum():
+    print()
+    
+        
         
 
 """
@@ -615,17 +616,11 @@ Parameters:
 
 def main():
     
-    #plot for numAgentsTasks vs Time
-    masterIdleSize = []
-    masterBusySize = []
-    masterTime = []
-
-
     #Plots for mean and median score vs time (over multiple trials)
     
     import sys
    # sys.stdout=open("test3.txt","w")
-
+    """
     #user sets foxhedge ratios she's interested in using foxhedgeArray])
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
@@ -639,26 +634,27 @@ def main():
     	i += 1
 
     #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
-    numRuns = 100
+    numRuns = 2
     numTrials = numRuns
     while(numRuns > 0):
         index = 0
         for ratio in foxhedgeArray:
             #timeFactor = 2, 10 agents, 15 tasks, ratio
             timeFactor = 2
-            numAgents = 100
-            numTasks = 150
+            numAgents = 5
+            numTasks = 15
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
-            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
             masterScoreList[index].append(score)
             index += 1
         numRuns -= 1
-
-    #plotNumAgentsTasksVsTime(timeFactor, numAgents, numTasks, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
-    #plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
-
+        
+    plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
+"""
+"""
+#def testTimeFactor():
    #testing time factor
     numRuns = 100
     masterScoreList2 = []
@@ -681,7 +677,7 @@ def main():
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
-                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
+                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
                 trialScores.append(score)
                 
             avg = statistics.mean(trialScores)
@@ -689,9 +685,12 @@ def main():
             
         index += 1
     plotScoreTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numRuns, foxhedgeArray, timeFactorArray, masterScoreList2)
-                
+     """         
+    
 
-    """
+    
+
+"""
     #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
     numRuns = 5
     numTrials = numRuns
@@ -705,17 +704,82 @@ def main():
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
-            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, masterIdleSize, masterBusySize, masterTime)
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
             masterScoreList[index].append(score)
             index += 1
         numRuns -= 1
         
     plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList) 
     """
+#testTimeFactor()
        
+def Test3D():
+    #3D plot of the number of agents and the prortion of generalists
+    numRuns = 100
+    masterScoreList3D = []
+    #vary proportion of generalists
+    foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+    foxhedgeArraySize = len(foxhedgeArray)
+    #vary number of agents
+    agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    #numTasks = 10*numAgents
+    i = 0
+    while(i < foxhedgeArraySize):
+    	temp = []
+    	masterScoreList3D.append(temp)
+    	i += 1
+        
+    #print(numAgents)
+    #print(numTasks)
+    index = 0
+    for ratio in foxhedgeArray:
+        for agentNum in agentNumbers:
+            for runs in range(numRuns):
+                trials = []
+                timeFactor = 2
+                numAgents = agentNum
+                numTasks = agentNum*10
+                foxhedge = ratio
+                penalty = 0.1 
+                scorecoeff = 0.1
+                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+                trials.append(score)
+            avg = statistics.mean(trials)
+            masterScoreList3D[index].append(avg)
+        index += 1
+        
+    #plotting 3D
+    x = []
+    y = []
+    z = []
+    count = 0
+    for r in masterScoreList3D:
+        count2 = 0
+        for na in r:
+            x.append(foxhedgeArray[count])
+            y.append(agentNumbers[count2])
+            z.append(na)
+            count2 += 1
+        count += 1
+            
+       
+    # Creating figure
+    fig = plt.figure(figsize = (10, 7))
+    ax = plt.axes(projection ="3d")
+         
+    # Creating plot
+    ax.scatter3D(x, y, z, color = "blue")
+    plt.title("Mean Score vs Number of Agents and Proportion of Generalists")
+    plt.xlabel('Proportion of Generalists')
+    plt.ylabel('Number of Agents')
+    ax.set_zlabel('Mean Score')
+    plt.figtext(.5, 0.07, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
+ 
+    # show plot
+    plt.show()
+                
     
     
-    
-
+Test3D()
    # sys.stdout.close()
-main()
+#main()

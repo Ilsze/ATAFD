@@ -729,7 +729,7 @@ def Test3D():
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
     #vary number of agents
-    agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 500, 1000])
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
