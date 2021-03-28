@@ -723,13 +723,17 @@ def main():
        
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 100
+    numRuns = 3
     masterScoreList3D = []
     #vary proportion of generalists
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
     #vary number of agents
-    agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 500, 1000])
+    #agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 500, 1000])
+    #agentNumbers = [1]
+    #list = range(10, 100, 10)
+    #agentNumbers.append(list)
+    agentNumbers = [element for element in range(10, 1000, 10)]
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
