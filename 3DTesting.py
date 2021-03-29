@@ -10,7 +10,11 @@ from mpl_toolkits import mplot3d
 
 import numpy as np
 import matplotlib.pyplot as plt
+#import seaborn as sns
 #%matplotlib notebook
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from mpl_toolkits.mplot3d import Axes3D
 
 #fig = plt.figure()
 #ax = plt.axes(projection="3d")
@@ -61,5 +65,16 @@ x = np.array([1,2,3,4,5,6,7,8,9,10])
 y = np.array([1,2,3,4,5,6,7,8,9,10])
 z = np.array([100, 200, 300, 900, 700, 200, 400, 500, 800, 100])
 ax.scatter3D(x, y, z, color = "blue");
+
+#surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
+  #                     linewidth=0, antialiased=False)
+  
+fig = plt.figure()
+ax = Axes3D(fig)
+surf = ax.plot_trisurf(x, y, z, cmap=cm.jet, linewidth=0.1)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+#plt.savefig('teste.pdf')
+plt.show()
+
 
 plt.show()

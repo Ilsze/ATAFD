@@ -572,7 +572,7 @@ def plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, n
     plt.title('Score vs. Proportion of Generalists')
     plt.xlabel("Proportion of Generalists")
     plt.ylabel("Score")
-    plt.legend(loc = 'upper right', bbox_to_anchor=(1.25, 1.025), fancybox=True)
+    #plt.legend(loc = 'upper right', bbox_to_anchor=(1.25, 1.025), fancybox=True)
     plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
     plt.subplots_adjust(bottom=0.15)
     plt.show()
@@ -620,7 +620,7 @@ def main():
     
     import sys
    # sys.stdout=open("test3.txt","w")
-    """
+    
     #user sets foxhedge ratios she's interested in using foxhedgeArray])
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
@@ -634,15 +634,15 @@ def main():
     	i += 1
 
     #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
-    numRuns = 2
+    numRuns = 100
     numTrials = numRuns
     while(numRuns > 0):
         index = 0
         for ratio in foxhedgeArray:
             #timeFactor = 2, 10 agents, 15 tasks, ratio
             timeFactor = 2
-            numAgents = 5
-            numTasks = 15
+            numAgents = 100
+            numTasks = 1000
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1
@@ -652,7 +652,7 @@ def main():
         numRuns -= 1
         
     plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
-"""
+
 """
 #def testTimeFactor():
    #testing time factor
@@ -715,8 +715,9 @@ def main():
        
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 100
-    masterScoreList3D = []
+    numRuns = 3
+    masterScoreList3DMean = []
+    masterScoreList3DSD = []
     #vary proportion of generalists
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
@@ -725,9 +726,10 @@ def Test3D():
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
-    	temp = []
-    	masterScoreList3D.append(temp)
-    	i += 1
+        temp = []
+        masterScoreList3DMean.append(temp)
+        masterScoreList3DSD.append(temp)
+        i += 1
         
     #print(numAgents)
     #print(numTasks)
@@ -738,14 +740,16 @@ def Test3D():
                 trials = []
                 timeFactor = 2
                 numAgents = agentNum
-                numTasks = agentNum*10
+                #numTasks = agentNum*10
+                numTasks = int(agentNum*10)
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
                 score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
                 trials.append(score)
             avg = statistics.mean(trials)
-            masterScoreList3D[index].append(avg)
+            stdev = statistics.stdev(trials)
+            masterScoreList3DMean[index].append(avg)
         index += 1
         
     #plotting 3D
@@ -753,7 +757,7 @@ def Test3D():
     y = []
     z = []
     count = 0
-    for r in masterScoreList3D:
+    for r in masterScoreList3DMean:
         count2 = 0
         for na in r:
             x.append(foxhedgeArray[count])
@@ -780,6 +784,6 @@ def Test3D():
                 
     
     
-Test3D()
+#Test3D()
    # sys.stdout.close()
-#main()
+main()

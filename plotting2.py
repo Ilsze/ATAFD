@@ -27,6 +27,9 @@ from random import randint
 import math
 import statistics
 from mpl_toolkits import mplot3d
+#import seaborn as sns
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 #To use debugging print statements set DEBUG to True
 DEBUG = False
 
@@ -723,8 +726,9 @@ def main():
        
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 3
-    masterScoreList3D = []
+    numRuns = 4
+    masterScoreList3DMean = []
+    masterScoreList3DSD = []
     #vary proportion of generalists
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
@@ -733,13 +737,14 @@ def Test3D():
     #agentNumbers = [1]
     #list = range(10, 100, 10)
     #agentNumbers.append(list)
-    agentNumbers = [element for element in range(10, 1000, 10)]
+    agentNumbers = [element for element in range(10, 1000, 50)]
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
-    	temp = []
-    	masterScoreList3D.append(temp)
-    	i += 1
+        temp = []
+        masterScoreList3DMean.append(temp)
+        masterScoreList3DSD.append(temp)
+        i += 1
         
     #print(numAgents)
     #print(numTasks)
@@ -750,22 +755,28 @@ def Test3D():
                 trials = []
                 timeFactor = 2
                 numAgents = agentNum
+                #numTasks = agentNum*10
+                #numTasks = int(agentNum*1.5)
                 numTasks = agentNum*10
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
                 score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
                 trials.append(score)
+            #stdDev = statistics.stdev(trials)    
             avg = statistics.mean(trials)
-            masterScoreList3D[index].append(avg)
+            stdDev = statistics.stdev(trials)
+            masterScoreList3DMean[index].append(avg)
+            masterScoreList3DSD[index].append(stdDev)
         index += 1
         
-    #plotting 3D
+    #plotting 3D Mean
     x = []
     y = []
     z = []
     count = 0
-    for r in masterScoreList3D:
+    
+    for r in masterScoreList3DMean:
         count2 = 0
         for na in r:
             x.append(foxhedgeArray[count])
@@ -773,15 +784,47 @@ def Test3D():
             z.append(na)
             count2 += 1
         count += 1
+        
+    #plotting 3D Standard Dev
+    xSD = []
+    ySD = []
+    zSD = []
+    count = 0
+    
+    for r in masterScoreList3DSD:
+        count2 = 0
+        for na in r:
+            xSD.append(foxhedgeArray[count])
+            ySD.append(agentNumbers[count2])
+            zSD.append(na)
+            count2 += 1
+        count += 1
             
        
-    # Creating figure
+    # Creating figure for Mean
     fig = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d")
          
     # Creating plot
+    #ax.surface_plot(x, y, z, cmap=cm.coolwarm,linewidth=0, antialiased=False)
     ax.scatter3D(x, y, z, color = "blue")
     plt.title("Mean Score vs Number of Agents and Proportion of Generalists")
+    plt.xlabel('Proportion of Generalists')
+    plt.ylabel('Number of Agents')
+    ax.set_zlabel('Mean Score')
+    plt.figtext(.5, 0.07, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
+ 
+    # show plot
+    plt.show()
+    
+    # Creating figure for Standard Dev
+    fig2 = plt.figure(figsize = (10, 7))
+    ax = plt.axes(projection ="3d")
+         
+    # Creating plot
+    #ax.surface_plot(x, y, z, cmap=cm.coolwarm,linewidth=0, antialiased=False)
+    ax.scatter3D(xSD, ySD, zSD, color = "blue")
+    plt.title("Standard Deviation of Score vs Number of Agents and Proportion of Generalists")
     plt.xlabel('Proportion of Generalists')
     plt.ylabel('Number of Agents')
     ax.set_zlabel('Mean Score')
