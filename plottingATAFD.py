@@ -748,7 +748,7 @@ def Test3D():
                 score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
                 trials.append(score)
             avg = statistics.mean(trials)
-            stdev = statistics.stdev(trials)
+            #stdev = statistics.stdev(trials)
             masterScoreList3DMean[index].append(avg)
         index += 1
         
@@ -784,6 +784,6 @@ def Test3D():
                 
     
     
-#Test3D()
+Test3D()
    # sys.stdout.close()
-main()
+#main()

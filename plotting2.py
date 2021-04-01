@@ -30,6 +30,7 @@ from mpl_toolkits import mplot3d
 #import seaborn as sns
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from scipy.interpolate import griddata
 #To use debugging print statements set DEBUG to True
 DEBUG = False
 
@@ -726,7 +727,7 @@ def main():
        
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 4
+    numRuns = 20
     masterScoreList3DMean = []
     masterScoreList3DSD = []
     #vary proportion of generalists
@@ -763,11 +764,12 @@ def Test3D():
                 scorecoeff = 0.1
                 score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
                 trials.append(score)
-            #stdDev = statistics.stdev(trials)    
+            #stdDev = statistics.stdev(trials)  
+            print(trials)
             avg = statistics.mean(trials)
-            stdDev = statistics.stdev(trials)
+            #sd = statistics.stdev(trials)
             masterScoreList3DMean[index].append(avg)
-            masterScoreList3DSD[index].append(stdDev)
+            #masterScoreList3DSD[index].append(sd)
         index += 1
         
     #plotting 3D Mean
@@ -784,7 +786,10 @@ def Test3D():
             z.append(na)
             count2 += 1
         count += 1
-        
+    np.array(x)
+    np.array(y)
+    np.array(z)
+    """ 
     #plotting 3D Standard Dev
     xSD = []
     ySD = []
@@ -800,7 +805,7 @@ def Test3D():
             count2 += 1
         count += 1
             
-       
+   """    
     # Creating figure for Mean
     fig = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d")
@@ -813,10 +818,10 @@ def Test3D():
     plt.ylabel('Number of Agents')
     ax.set_zlabel('Mean Score')
     plt.figtext(.5, 0.07, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
- 
-    # show plot
     plt.show()
-    
+    # show plot
+    #plt.show()
+    """
     # Creating figure for Standard Dev
     fig2 = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d")
@@ -833,7 +838,28 @@ def Test3D():
     # show plot
     plt.show()
                 
+    """
     
+    #surface plot (of mean)
+    # target grid to interpolate to
+    xi = np.arange(0,1.01,0.001)
+    yi = np.arange(10,1000.01,0.01)
+    xi,yi = np.meshgrid(xi,yi)
+    
+    # interpolate
+    zi = griddata((x,y),z,(xi,yi),method='linear')
+    
+    #plot
+    fig2 = plt.figure()
+    axes = fig2.gca(projection ='3d')
+    axes.plot_surface(xi, yi, zi)
+    #plt.plot(x,y,'k.')
+    plt.xlabel('Proportion of Generalist',fontsize=10)
+    plt.ylabel('Number of AGents',fontsize=10)
+    axes.set_zlabel('Mean Score', fontsize=10)
+    plt.title("Mean Score vs Proportion of Generalists and Number of Agents")
+    plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
+    plt.show()
     
 Test3D()
    # sys.stdout.close()

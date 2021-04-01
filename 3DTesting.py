@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
-
+"""
 #fig = plt.figure()
 #ax = plt.axes(projection="3d")
 
@@ -76,5 +76,85 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 #plt.savefig('teste.pdf')
 plt.show()
 
+"""
 
+#surface plot with data points
+#import matplotlib.pyplot as plt
+#import numpy as np
+from scipy.interpolate import griddata
+
+# data coordinates and values
+x = np.random.random(100)*10
+y = np.random.random(100)*10
+z = np.random.random(100)*10
+
+
+# target grid to interpolate to
+#xi = yi = np.arange(0,1.01,0.01)
+xi = yi = np.arange(0,10.01,0.1)
+xi,yi = np.meshgrid(xi,yi)
+
+# set mask
+#mask = (xi > 0.5) & (xi < 0.6) & (yi > 0.5) & (yi < 0.6)
+
+# interpolate
+zi = griddata((x,y),z,(xi,yi),method='linear')
+
+# mask out the field
+#zi[mask] = np.nan
+
+# plot
+#fig = plt.figure()
+#ax = fig.add_subplot(111)
+#ax = Axes3D(fig)
+
+#ax.scatter3D(x, y, z, color = "blue");
+
+#plt.contourf(xi,yi,zi,np.arange(0,1.01,0.01))
+fig = plt.figure()
+axes = fig.gca(projection ='3d')
+axes.plot_surface(xi, yi, zi)
+#plt.plot(x,y,'k.')
+plt.xlabel('xi',fontsize=16)
+plt.ylabel('yi',fontsize=16)
 plt.show()
+#plt.savefig('interpolated.png',dpi=100)
+#plt.close(fig)
+"""
+
+
+#import numpy as np
+#import pandas as pd
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.mplot3d import Axes3D
+  
+#a = np.array([1, 2, 3])
+#b = np.array([4, 5, 6, 7])
+  
+#a, b = np.meshgrid(a, b)
+  
+# surface plot for a**2 + b**2
+a = np.arange(-1, 1, 0.02)
+b = a
+a, b = np.meshgrid(a, b)
+
+
+  
+fig = plt.figure()
+axes = fig.gca(projection ='3d')
+axes.plot_surface(a, b, a**2 + b**2)
+  
+plt.show()
+
+
+"""
+"""
+from scipy.interpolate import griddata
+
+a = [1,2,3,4,5,6,7,8,9]
+b = [1,2,3,4,5,6,7,8,9]
+c = [4, 20, 12, 8, 15, 21, 30, 5, 10]
+
+ai, bi = np.meshgrid(a, b)
+ci = griddata((a,b),c,(ai,bi),method='linear')
+"""
