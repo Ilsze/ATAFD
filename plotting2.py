@@ -727,7 +727,7 @@ def main():
        
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 20
+    numRuns = 5
     masterScoreList3DMean = []
     masterScoreList3DSD = []
     #vary proportion of generalists
@@ -743,8 +743,9 @@ def Test3D():
     i = 0
     while(i < foxhedgeArraySize):
         temp = []
+        temp2 = []
         masterScoreList3DMean.append(temp)
-        masterScoreList3DSD.append(temp)
+        masterScoreList3DSD.append(temp2)
         i += 1
         
     #print(numAgents)
@@ -752,8 +753,9 @@ def Test3D():
     index = 0
     for ratio in foxhedgeArray:
         for agentNum in agentNumbers:
+            trials = []
             for runs in range(numRuns):
-                trials = []
+                #trials = []
                 timeFactor = 2
                 numAgents = agentNum
                 #numTasks = agentNum*10
@@ -767,11 +769,11 @@ def Test3D():
             #stdDev = statistics.stdev(trials)  
             print(trials)
             avg = statistics.mean(trials)
-            #sd = statistics.stdev(trials)
+            sd = statistics.stdev(trials)
             masterScoreList3DMean[index].append(avg)
-            #masterScoreList3DSD[index].append(sd)
+            masterScoreList3DSD[index].append(sd)
         index += 1
-        
+     
     #plotting 3D Mean
     x = []
     y = []
@@ -789,7 +791,7 @@ def Test3D():
     np.array(x)
     np.array(y)
     np.array(z)
-    """ 
+    
     #plotting 3D Standard Dev
     xSD = []
     ySD = []
@@ -805,7 +807,8 @@ def Test3D():
             count2 += 1
         count += 1
             
-   """    
+    """
+
     # Creating figure for Mean
     fig = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d")
@@ -821,7 +824,7 @@ def Test3D():
     plt.show()
     # show plot
     #plt.show()
-    """
+   
     # Creating figure for Standard Dev
     fig2 = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d")
@@ -843,7 +846,7 @@ def Test3D():
     #surface plot (of mean)
     # target grid to interpolate to
     xi = np.arange(0,1.01,0.001)
-    yi = np.arange(10,1000.01,0.01)
+    yi = np.arange(10,1000.01,0.001)
     xi,yi = np.meshgrid(xi,yi)
     
     # interpolate
@@ -860,6 +863,28 @@ def Test3D():
     plt.title("Mean Score vs Proportion of Generalists and Number of Agents")
     plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
     plt.show()
+    
+    #surface plot (of Std Dev)
+    # target grid to interpolate to
+    xiSD = np.arange(0,1.01,0.001)
+    yiSD = np.arange(10,1000.01,0.001)
+    xiSD,yiSD = np.meshgrid(xi,yi)
+    
+    # interpolate
+    ziSD = griddata((xSD,ySD),zSD,(xiSD,yiSD),method='linear')
+    
+    #plot
+    fig3 = plt.figure()
+    axes = fig3.gca(projection ='3d')
+    axes.plot_surface(xiSD, yiSD, ziSD)
+    #plt.plot(x,y,'k.')
+    plt.xlabel('Proportion of Generalist',fontsize=10)
+    plt.ylabel('Number of AGents',fontsize=10)
+    axes.set_zlabel('Standard Deviation of  Score', fontsize=10)
+    plt.title("Mean Score vs Proportion of Generalists and Number of Agents")
+    plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
+    plt.show()
+    
     
 Test3D()
    # sys.stdout.close()
