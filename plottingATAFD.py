@@ -509,7 +509,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     
     return score ##, timer
    
-    
+    #2D plots
 def plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList):
     meanScores = []
     medianScores = []
