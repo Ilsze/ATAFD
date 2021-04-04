@@ -246,57 +246,6 @@ def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationT
             
   
     return numFinishedTasks
-    """
-Parameters (Type Name):
-    List[Agents] idleAgents
-    List[Agent] competingAgents
-"""    
-def MakeCompetitors(idleAgents, competingAgents):
-    if idleAgents is not None:
-        for agent in list(idleAgents):
-
-            MoveAgent(agent, idleAgents, competingAgents)
- 
-
-    
-"""
-Parameters (Type Name):
-    List[Agent] competingAgents
-    List[Agents] idleAgents
-"""    
-def RemoveCompetitors(competingAgents, idleAgents):
-    if idleAgents is not None:
-        for agent in list(competingAgents):
-            
-            MoveAgent(agent, competingAgents, idleAgents)
-
-    
-"""
-Parameters (Type Name):
-    List[Agents] competingAgents
-    List[Tasks]  claimedTasks
-    List[Agents] busyAgents
-    List[Agents] idleAgents
-    Integer      timeFactor
-"""    
-def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents, timeFactor):
-    numTrades = 0
-    if claimedTasks is not None:
-        log("iterating through list of claimedtasks...")
-        for task in list(claimedTasks):
-            for competingAgent in list(competingAgents):
-                #if competing agent is better than agent assigned, reassign claimed task
-                if task.taskType in competingAgent.skillType and (competingAgent.skillLength * timeFactor) < task.timeRequired:
-                    log("agent " + str(competingAgent.ID) + " takes task from agent " + str(task.agentAssigned.ID))
-                    #move weaker agent into idleAgents and strongerAgent into busyAgents
-                    MoveAgent(task.agentAssigned, busyAgents, idleAgents)
-                    MoveAgent(competingAgent, competingAgents, busyAgents)
-                    task.agentAssigned = competingAgent
-                    task.timeRequired = competingAgent.skillLength * timeFactor
-                    numTrades += 1
-                    break
-    log("Number of trades made in the competition: " + str(numTrades))                         
-
 
 """
 Parameters (Type Name):
@@ -410,10 +359,7 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         #timer += 1
        
       
-            
-        #temerarily move idleAgents to competingAgents
      
-       # MakeCompetitors(blackboard.idleAgents, blackboard.competingAgents)
        
         
         
@@ -540,4 +486,4 @@ def main():
      
        
     
-main()
+#main()
