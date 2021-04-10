@@ -434,7 +434,7 @@ def Test3D():
     #agentNumbers = [1]
     #list = range(10, 100, 10)
     #agentNumbers.append(list)
-    agentNumbers = [element for element in range(10, 100, 50)]
+    agentNumbers = [element for element in range(10, 1000, 50)]
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
@@ -464,10 +464,11 @@ def Test3D():
                 trials.append(score)
             #stdDev = statistics.stdev(trials)  
             print(trials)
-            avg = statistics.mean(trials)
-            sd = statistics.stdev(trials)
+            avg = statistics.median(trials)
+           # avg = statistics.mean(trials)
+           # sd = statistics.stdev(trials)
             masterScoreList3DMean[index].append(avg)
-            masterScoreList3DSD[index].append(sd)
+           # masterScoreList3DSD[index].append(sd)
         index += 1
      
     #plotting 3D Mean
@@ -547,7 +548,8 @@ def Test3D():
     
     # interpolate
     zi = griddata((x,y),z,(xi,yi),method='linear')
-    
+    print(zi)
+    """
     #plot
     fig2 = plt.figure()
     axes = fig2.gca(projection ='3d')
@@ -581,8 +583,8 @@ def Test3D():
     plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
     plt.show()
 
-
+    """
 ####Functions to run
 #main()
 #testTimeFactor()
-#Test3D()
+Test3D()
