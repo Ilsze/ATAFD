@@ -22,7 +22,6 @@ from random import randint
 import math
 import statistics
 import sys
-import seaborn as sns
 from mpl_toolkits import mplot3d
 #import seaborn as sns
 from matplotlib import cm
@@ -30,26 +29,22 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from scipy.interpolate import griddata
 
 #plotting2 imports
-from plotting2 import log
-from plotting2 import Agent
-from plotting2 import Task
-from plotting2 import Blackboard
-from plotting2 import Initialization
-from plotting2 import MoveTask
-from plotting2 import MoveAgent
-from plotting2 import Assign
-from plotting2 import AssignUnclaimed
-from plotting2 import AgentsWork
-from plotting2 import accessSkillTypes
-from plotting2 import simulation
-from plotting2 import Test3D
+# from plotting2 import log
+# from plotting2 import Agent
+# from plotting2 import Task
+# from plotting2 import Blackboard
+# from plotting2 import Initialization
+# from plotting2 import MoveTask
+# from plotting2 import MoveAgent
+# from plotting2 import Assign
+# from plotting2 import AssignUnclaimed
+# from plotting2 import AgentsWork
+# from plotting2 import accessSkillTypes
+#from plotting2 import simulation
+# from plotting2 import Test3D
+#import plotting2
+from ATAFDSimulation import simulation
 
-def rand_jitter(arr):
-    stdev = .01 * (max(arr) - min(arr))
-    return arr + np.random.randn(len(arr)) * stdev
-
-def jitter(x, y, s=20, c='b', marker='o', cmap=None, norm=None, vmin=None, vmax=None, alpha=None, linewidths=None, verts=None, hold=None, **kwargs):
-    return scatter(rand_jitter(x), rand_jitter(y), s=s, c=c, marker=marker, cmap=cmap, norm=norm, vmin=vmin, vmax=vmax, alpha=alpha, linewidths=linewidths, **kwargs)
 
 #this function does 2D mean and median plots (score vs foxhedge ratio)
 def meanScoreVsFoxhedge(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList):
@@ -67,8 +62,8 @@ def meanScoreVsFoxhedge(timeFactor, numAgents, numTasks, foxhedge, penalty, scor
     plt.figure(1)
     x = np.array(foxhedgeArray)
     plt.scatter(x, meanScores)
-    #m, b = np.polyfit(x, meanScores, 1)
-    #plt.plot(x, m*x + b)
+    m, b = np.polyfit(x, meanScores, 1)
+    plt.plot(x, m*x + b)
     plt.title('Mean Scores vs. Proportion of Generalists')
     plt.xlabel("Proportion of Generalists")
     plt.ylabel("Mean Scores")
@@ -95,9 +90,9 @@ def medianScoreVsFoxhedge(timeFactor, numAgents, numTasks, foxhedge, penalty, sc
     plt.figure(2)
     x = np.array(foxhedgeArray)
     plt.scatter(x, medianScores)
-    #m, b = np.polyfit(x, medianScores, 1)
-    #plt.plot(x, m*x + b)
-    #plt.plot(foxhedgeArray, np.poly1d(np.polyfit(foxhedgeArray, medianScores, 1)*foxhedgeArray)
+    m, b = np.polyfit(x, medianScores, 1)
+    plt.plot(x, m*x + b)
+   # plt.plot(foxhedgeArray, np.poly1d(np.polyfit(foxhedgeArray, medianScores, 1)*foxhedgeArray)
     plt.title('Median Scores vs. Proportion of Generalists')
     plt.xlabel("Proportion of Generalists")
     plt.ylabel("Median Scores")
@@ -119,19 +114,7 @@ def allScoreVsFoxhedge(timeFactor, numAgents, numTasks, foxhedge, penalty, score
         y = []
         for l in masterScoreList:
             y.append(l[n])
-        sns.stripplot(x = x, y = y, jitter = 0.4)
-        sns.despine()
-
-
-
-        #failed attempts below
-        #sb.regplot(x, y, fit_reg = False, x_jitter = 0.2, y_jitter = 0.2, scatter_kws = {'alpha' : 1/3})
-        #plt.jitter(x, y)
-        #plt.jitter(x, y, label = "Run: " + str(n+1))
-        #sns.set(style='ticks', context='talk')
-        #sns.swarmplot(x, y)
-        #sns.despine()
-
+        plt.scatter(x, y, label = "Run: " + str(n+1))
         #plt.scatter(x, y)
        # m, b = np.polyfit(x, y, 1)
        # plt.plot(x, m*x + b)
@@ -159,7 +142,7 @@ def plotScoreVsTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, sc
        y = []
        for r in masterScoreList2:
             y.append(r[n])
-       plt.scatter(x, y, label = '= ' + str(foxhedgeArray[n]), alpha = 1/5)
+       plt.scatter(x, y, label = '= ' + str(foxhedgeArray[n]))
        m, b = np.polyfit(x, y, 1)
        plt.plot(x, m*x + b)
     
@@ -196,8 +179,8 @@ def graph2D():
         for ratio in foxhedgeArray:
             #timeFactor = 2, 10 agents, 15 tasks, ratio
             timeFactor = 2
-            numAgents = 100
-            numTasks = 10000
+            numAgents = 5
+            numTasks = 15
             foxhedge = ratio
             penalty = 0.1 
             scorecoeff = 0.1

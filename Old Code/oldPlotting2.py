@@ -17,9 +17,7 @@ Model Parameters: timefactor, stagnationfactor, numagents, numtasks, foxhedgerat
 Classes: Agents, Tasks, Blackboard
 
 
-Functions: log, Agent, Task, Blackboard, Initialization, MoveTask, MoveAgent, Assign, AssignUnclaimed, 
-           AgentsWork, accessSkillTypes, simulation, plotScores, 
-           plotScoreTimeFactor, main, Test3D
+Functions: Main, Initilzation, MoveTask, MoveAgent, Assign, AssignUnclaimed, AssignNew, AgentsWork, MakeCompetiters, Reassign
 """
 
 import numpy as np
@@ -28,7 +26,6 @@ import random
 from random import randint
 import math
 import statistics
-import sys
 from mpl_toolkits import mplot3d
 #import seaborn as sns
 from matplotlib import cm
@@ -40,6 +37,7 @@ DEBUG = False
 def log(s):
     if DEBUG:
         print(s)
+
 
 
 #classes:
@@ -81,7 +79,9 @@ class Task:
         self.timeRequired = -1
         
        
-
+        
+        
+        
             
 """
 Blackboard:
@@ -141,7 +141,10 @@ def Initialization(blackboard, numAgents, numTasks, foxHedge, timeFactor):
     
     return stagnationFactor    
    
-            
+        
+    
+    
+       
 
 
 """
@@ -255,7 +258,58 @@ def AgentsWork(busyAgents, idleAgents, claimedTasks, completedTasks, stagnationT
             
   
     return numFinishedTasks
+    """
+Parameters (Type Name):
+    List[Agents] idleAgents
+    List[Agent] competingAgents
+"""    
+def MakeCompetitors(idleAgents, competingAgents):
+    if idleAgents is not None:
+        for agent in list(idleAgents):
+
+            MoveAgent(agent, idleAgents, competingAgents)
+ 
+
     
+"""
+Parameters (Type Name):
+    List[Agent] competingAgents
+    List[Agents] idleAgents
+"""    
+def RemoveCompetitors(competingAgents, idleAgents):
+    if idleAgents is not None:
+        for agent in list(competingAgents):
+            
+            MoveAgent(agent, competingAgents, idleAgents)
+
+    
+"""
+Parameters (Type Name):
+    List[Agents] competingAgents
+    List[Tasks]  claimedTasks
+    List[Agents] busyAgents
+    List[Agents] idleAgents
+    Integer      timeFactor
+"""    
+def Reassign(competingAgents, claimedTasks, busyAgents, idleAgents, timeFactor):
+    numTrades = 0
+    if claimedTasks is not None:
+        log("iterating through list of claimedtasks...")
+        for task in list(claimedTasks):
+            for competingAgent in list(competingAgents):
+                #if competing agent is better than agent assigned, reassign claimed task
+                if task.taskType in competingAgent.skillType and (competingAgent.skillLength * timeFactor) < task.timeRequired:
+                    log("agent " + str(competingAgent.ID) + " takes task from agent " + str(task.agentAssigned.ID))
+                    #move weaker agent into idleAgents and strongerAgent into busyAgents
+                    MoveAgent(task.agentAssigned, busyAgents, idleAgents)
+                    MoveAgent(competingAgent, competingAgents, busyAgents)
+                    task.agentAssigned = competingAgent
+                    task.timeRequired = competingAgent.skillLength * timeFactor
+                    numTrades += 1
+                    break
+    log("Number of trades made in the competition: " + str(numTrades))                         
+
+
 """
 Parameters (Type Name):
     List[Agents] idleAgents
@@ -363,10 +417,28 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
         elif numTasksCompleted > 0:
             stagnationTimer = 0
         
-        
+        #increase time
+        #timer += 1
+       
+      
+            
+        #temerarily move idleAgents to competingAgents
      
+       # MakeCompetitors(blackboard.idleAgents, blackboard.competingAgents)
+       
         
+        
+        #randomize order of task lists
+        #random.shuffle(blackboard.unclaimedTasks)
+        #random.shuffle(blackboard.claimedTasks)
+        
+        #main competing function
+        #Reassign(blackboard.competingAgents, blackboard.claimedTasks, blackboard.busyAgents, blackboard.idleAgents, timeFactor)
 
+        #move agents in competing list back to idle list
+       # RemoveCompetitors(blackboard.competingAgents, blackboard.idleAgents)
+        
+        #agents work again
         """
         
 
@@ -415,12 +487,244 @@ def simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff):
     print("After working, agents complete "+ str(len(blackboard.completedTasks)) + " out of "+ str(numTasks)+ " tasks")
     print("score: ", score)
     print("Time taken: "+ str(timer))
+    
+
+#Plots Agents/Tasks vs Time and Number completed tasks vs time (for 1 simulation run)
+     #Would like turn this into a function
+     
+    """
+    plt.figure(1)
+    plt.plot(time, idleAgentsSize, label = "idleAgents")
+    plt.plot(time, busyAgentsSize, label = "busyAgents")
+    #plt.plot(time, unclaimedTasks, label = "unclaimedTasks")
+    #plt.plot(time, claimedTasks, label = "claimedTasks")
+    plt.title('Number of Agents vs. Time')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Agents')
+    plt.legend(loc = 'upper right', bbox_to_anchor=(1.32, 1.025), fancybox=True)
+    #plt.legend()
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
+    """
+    """
+    plt.figure(2)
+    plt.plot(time, completedTasks, label = "completedTasks")
+    plt.title('Number of Completed Tasks vs. Time')
+    plt.xlabel('Time')
+    plt.ylabel('Number of completed tasks')
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff), ha="center", fontsize=9) 
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
+    """
    
     
     return score ##, timer
    
+    
+def plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList):
+    meanScores = []
+    medianScores = []
+    
+    #find the mean and median of each sublist
+    j = 0
+    while(j < len(masterScoreList)):
+    	meanScores.append(statistics.mean(masterScoreList[j]))
+    	medianScores.append(statistics.median(masterScoreList[j]))
+    	j += 1
 
+    #print(str(simulation(1, 10, 15, 0.2, 0.1, 0.1)))
+    print("foxhedge array:")
+    print(foxhedgeArray)
+    print('MasterScoreList:')
+    print(masterScoreList)
+    print('meanScores: ')
+    print(meanScores)
+    
+    #Mean score vs fox ratio (for multiple runs)
+    plt.figure(3)
+    x = np.array(foxhedgeArray)
+    plt.scatter(x, meanScores)
+    m, b = np.polyfit(x, medianScores, 1)
+    plt.plot(x, m*x + b)
+    plt.title('Mean Scores vs. Proportion of Generalists')
+    plt.xlabel("Proportion of Generalists")
+    plt.ylabel("Mean Scores")
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
 
+    #Median score  vs fox ratio (for multiple runs)
+    plt.figure(4)
+    x = np.array(foxhedgeArray)
+    plt.scatter(x, medianScores)
+    m, b = np.polyfit(x, medianScores, 1)
+    plt.plot(x, m*x + b)
+   # plt.plot(foxhedgeArray, np.poly1d(np.polyfit(foxhedgeArray, medianScores, 1)*foxhedgeArray)
+    plt.title('Median Scores vs. Proportion of Generalists')
+    plt.xlabel("Proportion of Generalists")
+    plt.ylabel("Median Scores")
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9) 
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
+    
+    #All score points vs fox ratio (for multiple runs)
+
+    plt.figure(3)
+    x = np.array(foxhedgeArray)
+    for n in range(len(masterScoreList[0])):
+        y = []
+        for l in masterScoreList:
+            y.append(l[n])
+        plt.scatter(x, y, label = "Run: " + str(n+1))
+        #plt.scatter(x, y)
+       # m, b = np.polyfit(x, y, 1)
+       # plt.plot(x, m*x + b)
+    
+    plt.title('Score vs. Proportion of Generalists')
+    plt.xlabel("Proportion of Generalists")
+    plt.ylabel("Score")
+    plt.legend(loc = 'upper right', bbox_to_anchor=(1.25, 1.025), fancybox=True)
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()
+    
+   
+def plotScoreTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, timeFactorArray, masterScoreList2):
+    plt.figure(4)
+    x = np.array(timeFactorArray)
+    for n in range(len(masterScoreList2[0])):
+       y = []
+       for r in masterScoreList2:
+            y.append(r[n])
+       plt.scatter(x, y, label = '= ' + str(foxhedgeArray[n]))
+       m, b = np.polyfit(x, y, 1)
+       plt.plot(x, m*x + b)
+    
+    plt.title('Score vs. timeFactor')
+    plt.xlabel("timeFactor")
+    plt.ylabel("Score")
+    plt.legend(loc = 'upper right', bbox_to_anchor=(1.42, 1.025), fancybox=True, title = 'Proportion of Generalists')
+    plt.figtext(.5, 0, "timeFactor = " + str(timeFactor) + ", numAgents = " + str(numAgents) + ", numTasks = " + str(numTasks) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numTrials), ha="center", fontsize=9)
+    plt.subplots_adjust(bottom=0.15)
+    plt.show()        
+        
+    
+#plots score as number of agents and proportion of generalist are varied
+def plot3DAgentsNum():
+    print()
+    
+        
+        
+
+"""
+reminder
+Parameters: 
+    timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff
+"""
+   
+#simulation(10, 2000, 100, 1000, .2, 0.1, 0.1)
+#simulation(10, 3, 4, 10, .2, 0.1, 0.1)
+
+def main():
+    
+    #Plots for mean and median score vs time (over multiple trials)
+    
+    import sys
+   # sys.stdout=open("test3.txt","w")
+    """
+    #user sets foxhedge ratios she's interested in using foxhedgeArray])
+    foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+    foxhedgeArraySize = len(foxhedgeArray)
+    masterScoreList = []
+  
+    #generate as many lists as there are foxhedge ratios
+    i = 0
+    while(i < foxhedgeArraySize):
+    	temp = []
+    	masterScoreList.append(temp)
+    	i += 1
+
+    #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
+    numRuns = 2
+    numTrials = numRuns
+    while(numRuns > 0):
+        index = 0
+        for ratio in foxhedgeArray:
+            #timeFactor = 2, 10 agents, 15 tasks, ratio
+            timeFactor = 2
+            numAgents = 5
+            numTasks = 15
+            foxhedge = ratio
+            penalty = 0.1 
+            scorecoeff = 0.1
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+            masterScoreList[index].append(score)
+            index += 1
+        numRuns -= 1
+        
+    plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList)
+"""
+"""
+#def testTimeFactor():
+   #testing time factor
+    numRuns = 100
+    masterScoreList2 = []
+    timeFactorArray = [1,2,3,4,5,6,7,8,9,10]
+    #generate as many lists as there are foxhedge ratios
+    i = 0
+    while(i < len(timeFactorArray)):
+    	temp = []
+    	masterScoreList2.append(temp)
+    	i += 1
+        
+    index = 0   
+    for tf in timeFactorArray:
+        for ratio in foxhedgeArray:
+            trialScores = []
+            for run in range(numRuns):
+                timeFactor = tf
+                numAgents = 100
+                numTasks = 150
+                foxhedge = ratio
+                penalty = 0.1 
+                scorecoeff = 0.1
+                score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+                trialScores.append(score)
+                
+            avg = statistics.mean(trialScores)
+            masterScoreList2[index].append(avg)
+            
+        index += 1
+    plotScoreTimeFactor(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numRuns, foxhedgeArray, timeFactorArray, masterScoreList2)
+     """         
+    
+
+    
+
+"""
+    #fill in sublists of masterScoreList. Each contains scores from one foxhedge ratio
+    numRuns = 5
+    numTrials = numRuns
+    while(numRuns > 0):
+        index = 0
+        for tf in timefactorArray:
+            #timeFactor = 2, 10 agents, 15 tasks, ratio
+            timeFactor = tf
+            numAgents = 10
+            numTasks = 15
+            foxhedge = ratio
+            penalty = 0.1 
+            scorecoeff = 0.1
+            score = simulation(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff)
+            masterScoreList[index].append(score)
+            index += 1
+        numRuns -= 1
+        
+    plotScores(timeFactor, numAgents, numTasks, foxhedge, penalty, scorecoeff, numTrials, foxhedgeArray, masterScoreList) 
+    """
+#testTimeFactor()
+       
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
     numRuns = 3
@@ -434,7 +738,7 @@ def Test3D():
     #agentNumbers = [1]
     #list = range(10, 100, 10)
     #agentNumbers.append(list)
-    agentNumbers = [element for element in range(10, 1000, 50)]
+    agentNumbers = [element for element in range(10, 800, 50)]
     #numTasks = 10*numAgents
     i = 0
     while(i < foxhedgeArraySize):
@@ -464,11 +768,10 @@ def Test3D():
                 trials.append(score)
             #stdDev = statistics.stdev(trials)  
             print(trials)
-            avg = statistics.median(trials)
-           # avg = statistics.mean(trials)
-           # sd = statistics.stdev(trials)
+            avg = statistics.mean(trials)
+            sd = statistics.stdev(trials)
             masterScoreList3DMean[index].append(avg)
-           # masterScoreList3DSD[index].append(sd)
+            masterScoreList3DSD[index].append(sd)
         index += 1
      
     #plotting 3D Mean
@@ -548,12 +851,12 @@ def Test3D():
     
     # interpolate
     zi = griddata((x,y),z,(xi,yi),method='linear')
-    print(zi)
-    """
+    
     #plot
     fig2 = plt.figure()
+    cmap = plt.get_cmap('Spectral')
     axes = fig2.gca(projection ='3d')
-    axes.plot_surface(xi, yi, zi)
+    axes.plot_surface(xi, yi, zi, cmap=cmap, vmin=np.nanmin(zi), vmax=np.nanmax(zi))
     #plt.plot(x,y,'k.')
     plt.xlabel('Proportion of Generalist',fontsize=10)
     plt.ylabel('Number of AGents',fontsize=10)
@@ -582,9 +885,28 @@ def Test3D():
     plt.title("Mean Score vs Proportion of Generalists and Number of Agents")
     plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
     plt.show()
-
-    """
-####Functions to run
-#main()
-#testTimeFactor()
+    
+    
 Test3D()
+   # sys.stdout.close()
+#main()
+def test10A15T():
+    scores = []
+   # scoreSet = set()
+    numRuns= 100
+    for i in range(numRuns):
+        print("Run: ", i)
+        s = simulation(2, 10, 15, 0.8, 0.1, 0.1)
+        scores.append(s)
+        #scoreSet.add(s)
+        
+    print(numRuns, " Runs")     
+    print("Scores:")
+    print(scores)
+   # print("Unique scores: ", scoreSet)
+                   
+#test10A15T()                   
+                   
+                   
+                   
+                   
