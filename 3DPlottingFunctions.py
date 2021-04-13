@@ -8,6 +8,8 @@ Created on Mon Apr 12 20:30:49 2021
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
+import statistics
+from scipy.interpolate import griddata
 
 #plotting2 imports
 # from plotting2 import log
@@ -21,19 +23,19 @@ from mpl_toolkits import mplot3d
 #from plotting2 import AssignUnclaimed
 #from plotting2 import AgentsWork
 #from plotting2 import accessSkillTypes
-from plotting2 import simulation
+from ATAFDSimulation import simulation
 #from plotting2 import Test3D
 
 def Test3D():
     #3D plot of the number of agents and the prortion of generalists
-    numRuns = 3
+    numRuns = 5
     masterScoreList3DMean = []
     masterScoreList3DSD = []
     #vary proportion of generalists
     foxhedgeArray = ([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     foxhedgeArraySize = len(foxhedgeArray)
     #vary number of agents
-    #agentNumbers = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 500, 1000])
+    #agentNumbers = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     #agentNumbers = [1]
     #list = range(10, 100, 10)
     #agentNumbers.append(list)
@@ -59,7 +61,7 @@ def Test3D():
                 numAgents = agentNum
                 #numTasks = agentNum*10
                 #numTasks = int(agentNum*1.5)
-                numTasks = agentNum*10
+                numTasks = round(agentNum*10)
                 foxhedge = ratio
                 penalty = 0.1 
                 scorecoeff = 0.1
@@ -152,7 +154,7 @@ def Test3D():
     # interpolate
     zi = griddata((x,y),z,(xi,yi),method='linear')
     print(zi)
-    """
+    
     #plot
     fig2 = plt.figure()
     axes = fig2.gca(projection ='3d')
@@ -186,8 +188,8 @@ def Test3D():
     plt.figtext(.5, 0.0, "timeFactor = " + str(timeFactor) + ", penalty = " + str(penalty) +  ", scorecoeff = " + str(scorecoeff) + ", numRuns = " + str(numRuns), ha="center", fontsize=10)
     plt.show()
 
-    """
+    
 ####Functions to run
 #main()
 #testTimeFactor()
-#Test3D()
+Test3D()
